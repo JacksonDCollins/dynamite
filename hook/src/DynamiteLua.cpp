@@ -314,6 +314,42 @@ namespace Dynamite {
         return 0;
     }
 
+    int l_WarpToOrigin(lua_State *L) {
+        spdlog::info("{}", __PRETTY_FUNCTION__);
+        Vector3 target = {.x = 0.0f, .y = 20.0f, .z = 0.0f};
+        Quat rot = {
+            .x = 0,
+            .y = -0.1f,
+            .z = 0,
+            .w = 7.0f,
+        };
+
+        auto playerID = 1;
+        if (g_hook->cfg.Host) {
+            playerID = 0;
+        }
+
+        auto gameObject = FindGameObjectWithID(playerID);
+        if (gameObject == nullptr) {
+            spdlog::info("{}, cannot find game object to warp", __PRETTY_FUNCTION__);
+
+            lua_getglobal(L, "TppUiCommand");
+            lua_getfield(L, -1, "AnnounceLogViewLangId");
+            const auto text = "dynamite_warp_no_player\0";
+            lua_pushstring(L, text);
+            lua_pcall(L, 1, 0, 0);
+            return 0;
+        }
+
+        gameObject = (char *)gameObject + 0x20;
+
+        spdlog::info("{}, player {} warping to origin {}, {}, {}", __PRETTY_FUNCTION__, playerID, target.x, target.y, target.z);
+
+        Player2GameObjectImplWarp(gameObject, playerID, &target, &rot, true);
+
+        return 0;
+    }
+
     int l_IsSynchronized(lua_State *L) {
         const auto res = g_hook->dynamiteSyncImpl.IsSynchronized();
         lua_pushboolean(L, res);
@@ -433,6 +469,7 @@ namespace Dynamite {
             {"GetMissionsCompleted", l_GetMissionsCompleted},
             {"GetEquipment", l_GetActiveEquipmentID},
             {"GetEquipIDInSlot", l_GetEquipIDInSlot},
+            {"WarpToOrigin", l_WarpToOrigin},
             {nullptr, nullptr},
         };
         luaI_openlib(L, "Dynamite", libFuncs, 0);

@@ -211,7 +211,7 @@ func (c *Config) Default() error {
 		{
 			Name:     "DOWN",
 			Module:   "Dynamite",
-			Function: "WarpToPartner",
+			Function: "WarpToOrigin",
 		},
 	}
 

@@ -24,6 +24,7 @@ namespace Dynamite {
     int l_AcceptMarkerRequests(lua_State *L);
     int l_GetPlayerPosition(lua_State *L);
     int l_WarpToPartner(lua_State *L);
+    int l_WarpToOrigin(lua_State *L);
     int l_IsSynchronized(lua_State *L);
     int l_RequestVar(lua_State *L);
     int l_Ping(lua_State *L);
